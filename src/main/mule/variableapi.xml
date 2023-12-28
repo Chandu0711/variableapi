@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="41765393-2e02-42e7-854c-8d4072650ca7" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="variableapiFlow" doc:id="346615dc-4ffc-46ca-a3f3-38f57bb04d3d" >
+		<http:listener doc:name="Listener" doc:id="747c4b1d-0257-4828-b1cd-645fbd724979" config-ref="HTTP_Listener_config" path="/var"/>
+		<set-variable value='#["john"]' doc:name="Set Variable" doc:id="3fc096e1-0c21-4f4f-b469-aef8ae47cf76" variableName="stdName"/>
+		<logger level="INFO" doc:name="Logger" doc:id="f43d6ba3-711e-4cf7-a830-e1a66721c931" message="#[vars.stdName]"/>
+		<ee:transform doc:name="Transform Message" doc:id="0e9ac000-60e7-440d-b5cb-287d46f21e75" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+"stdName":vars.stdName]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="std" ><![CDATA["sri"]]></ee:set-variable>
+				<ee:set-variable variableName="empName" ><![CDATA[%dw 2.0
+output application/json
+---
+"empname":"ooha"]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="ce287c23-88c5-49cb-ade8-5a1cdca89ab9" message="#[vars.empName.empname]"/>
+		<logger level="INFO" doc:name="Logger" doc:id="fac966c4-9f61-4ac9-a796-58641a71e133" message="#[vars.std]"/>
+	</flow>
+</mule>
